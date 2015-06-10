@@ -4,6 +4,7 @@ import tweepy
 from keys import keys
 from pprint import pprint
 import time
+import string
 
 CONSUMER_KEY = keys['consumer_key']
 CONSUMER_SECRET = keys['consumer_secret']
@@ -21,7 +22,7 @@ def connect():
 
 def search():
 	global api
-	twts = api.search(q="Hello World!")
+	twts = api.search(q="hello world")
 	pprint(twts[0])
 	print "*"*80
 	print twts[0].text
@@ -42,14 +43,36 @@ def tweetforever():
 	filename.close()
 
 	for line in f:
-	     api.update_status(line)
+	     api.update_status(status = (line))
 	     print line
 	     time.sleep(3600) # Sleep for 1 hour
 
+def respond_to_dog(): 
+    #while True:
+        twts = api.search(q="dog")
+        if twts: 
+            for t in twts:
+                txt = t.text
+               # print(txt.lower())
+                txt = txt.lower()
+                newtxt = string.replace(txt.encode("utf-8"), 'dog', 'god')
+                screenname = t.user.screen_name.encode("utf-8")
+                mytweet = "@{0} {1}".format(screenname, newtxt)
+                print "about to tweet: ", mytweet
+                if len(mytweet) < 140:
+                    api.update_status(status=mytweet)
+
+
+
+
+#print str.replace("is", "was");
+
 def main():
-	connect()
-	search()
-	mentions()
+    connect()
+    respond_to_dog()
+    #search()
+    #tweetforever()
+    #mentions()
 
 if __name__ == "__main__":
 	main()
